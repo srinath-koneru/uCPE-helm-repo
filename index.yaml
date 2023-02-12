@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  testvmi-nocloud:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2023-02-12T22:46:14.454898878Z"
+    description: testvmi-nocloud
+    digest: 1852d1fe929ef5362a5e56ecce70311af917e62a621438b378ded3260ef3fc13
+    name: testvmi-nocloud
+    type: application
+    urls:
+    - https://github.com/srinath-koneru/uCPE-helm-repo/releases/download/testvmi-nocloud-0.0.1/testvmi-nocloud-0.0.1.tgz
+    version: 0.0.1
+generated: "2023-02-12T22:46:14.162633894Z"

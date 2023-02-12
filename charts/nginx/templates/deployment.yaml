@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+spec:
+  replicas: {{ .Values.ui.replicaCount }}
+  selector:
+    matchLabels:
+      key: "{{ .Release.Name }}"
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        key: "{{ .Release.Name }}"
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: key
+                    operator: In
+                    values:
+                      - {{ .Release.Name }}
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: ui
+          image: "{{ .Values.ui.image }}:{{ .Values.ui.tag }}"
+          imagePullPolicy: {{ .Values.ui.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.ui.service.internalPort }}
+          resources: {{ toYaml .Values.ui.resources | nindent 12 }}
+    {{- with .Values.ui.nodeSelector }}
+      nodeSelector:
+    {{ toYaml . | indent 8 }}
+    {{- end }}

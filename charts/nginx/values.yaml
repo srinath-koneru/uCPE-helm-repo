@@ -1,0 +1,25 @@
+ui:
+  replicaCount: 2
+  image: eisimages.azurecr.us/api-center/api-center-ui
+  tag: 1.0.0
+  pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    externalPort: 80
+    internalPort: 80
+  nodeSelector:
+    app: "true"
+  ingress:
+    enabled: true
+    class: nginx
+    domain:
+      apicenter: apicenter.gov.lumen.com
+      developers: developers.gov.lumen.com
+      apimarketplace: apimarketplace.gov.lumen.com
+  resources:
+    limits:
+      memory: 64Mi
+      cpu: 25m
+    requests:
+      memory: 32Mi
+      cpu: 10m

@@ -1,34 +1,46 @@
 apiVersion: kubevirt.io/v1
-kind: VirtualMachineInstance
+kind: VirtualMachine
 metadata:
-  name: testvmi-nocloud
+  name: testvmbionic1804
 spec:
-  terminationGracePeriodSeconds: 30
-  domain:
-    resources:
-      requests:
-        memory: 1024M
-    devices:
-      disks:
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/size: small
+        kubevirt.io/domain: testvm
+    spec:
+      domain:
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+            - name: default
+              masquerade: {}
+        resources:
+          requests:
+            memory: 1024M
+      networks:
+        - name: default
+          pod: {}
+      volumes:
         - name: containerdisk
-          disk:
-            bus: virtio
-        - name: emptydisk
-          disk:
-            bus: virtio
-        - disk:
-            bus: virtio
-          name: cloudinitdisk
-  volumes:
-    - name: containerdisk
-      containerDisk:
-        image: kubevirt/fedora-cloud-container-disk-demo:latest
-    - name: emptydisk
-      emptyDisk:
-        capacity: "2Gi"
-    - name: cloudinitdisk
-      cloudInitNoCloud:
-        userData: |-
-          #cloud-config
-          password: fedora
-          chpasswd: { expire: False }
+          containerDisk:
+            image: registry.dev.sase.lumen.com/ubuntu/bionic-server-cloudimg-amd64:18.04
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              system_info:
+                default_user:
+                  name: lumen
+                  home: /home/lumen
+              password: Pa$$wo3d##
+              chpasswd: { expire: False }
+              hostname: UCPE001
+              ssh_pwauth: True
